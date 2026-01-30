@@ -1,0 +1,13 @@
+# Build artifacts
+bin/
+obj/
+
+# User-specific
+.vscode/
+
+# Local data
+app.db
+Logs/
+
+# Secrets
+appsettings.Development.json

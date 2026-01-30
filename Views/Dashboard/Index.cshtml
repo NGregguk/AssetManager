@@ -1,0 +1,109 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<section class="page-header">
+    <div>
+        <h1>Asset overview</h1>
+        <p class="muted">Live snapshot of availability, maintenance, and supplier coverage.</p>
+    </div>
+    <div class="header-actions">
+        <a class="button" asp-controller="Assets" asp-action="Create">Add asset</a>
+    </div>
+</section>
+
+<section class="health-grid">
+    @foreach (var item in Model.HealthSummary)
+    {
+        <div class="health-card @item.Tone">
+            <div class="health-title">@item.Title</div>
+            <div class="health-value">@item.Value</div>
+            <div class="health-helper">@item.Helper</div>
+        </div>
+    }
+</section>
+
+<section class="stats-grid">
+    @foreach (var stat in Model.Stats)
+    {
+        var zeroClass = stat.Value == 0 ? "zero" : string.Empty;
+        <div class="stat-card @zeroClass">
+            <div class="stat-title">@stat.Title</div>
+            <div class="stat-value">@stat.Value</div>
+            <div class="stat-helper">@stat.Helper</div>
+        </div>
+    }
+</section>
+
+<section class="content-grid">
+    <div class="panel">
+        <div class="panel-header">
+            <h2>Recent assets</h2>
+            <a class="text-link" asp-controller="Assets" asp-action="Index">View all</a>
+        </div>
+        <div class="table-wrap">
+            <table class="table table-borderless align-middle">
+                <thead>
+                    <tr>
+                        <th>Asset</th>
+                        <th>Category</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @if (Model.RecentAssets.Count == 0)
+                {
+                    <tr>
+                        <td colspan="4" class="empty-state">No assets created yet.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var asset in Model.RecentAssets)
+                    {
+                        <tr>
+                            <td>
+                                <div class="asset-name">@asset.Name</div>
+                                <div class="muted">@(string.IsNullOrWhiteSpace(asset.Tag) ? "No tag" : asset.Tag)</div>
+                            </td>
+                            <td>@(asset.Category?.Name ?? "Uncategorised")</td>
+                            <td>@(asset.Location?.Name ?? "Unassigned")</td>
+                            <td><span class="pill">@asset.Status</span></td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-header">
+            <h2>Maintenance horizon</h2>
+            <span class="muted">Upcoming next due dates</span>
+        </div>
+        <div class="maintenance-list">
+            @if (Model.UpcomingMaintenance.Count == 0)
+            {
+                <div class="empty-state">No upcoming maintenance scheduled.</div>
+            }
+            else
+            {
+                foreach (var item in Model.UpcomingMaintenance)
+                {
+                    <div class="maintenance-item">
+                        <div>
+                            <div class="asset-name">@item.Asset.Name</div>
+                            <div class="muted">@(item.Vendor?.Name ?? "Internal service")</div>
+                        </div>
+                        <div class="due-date">
+                            @(item.NextDueDate?.ToString("dd MMM yyyy") ?? "Unscheduled")
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>

@@ -1,0 +1,140 @@
+@model Asset
+
+<div class="form-grid">
+    <div class="form-field">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="Tag"></label>
+        <input asp-for="Tag" class="form-control" />
+        <span asp-validation-for="Tag" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="SerialNumber"></label>
+        <input asp-for="SerialNumber" class="form-control" />
+        <span asp-validation-for="SerialNumber" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="ComputerName"></label>
+        <input asp-for="ComputerName" class="form-control" />
+        <span asp-validation-for="ComputerName" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="Manufacturer"></label>
+        <input asp-for="Manufacturer" class="form-control" />
+        <span asp-validation-for="Manufacturer" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="Model"></label>
+        <input asp-for="Model" class="form-control" />
+        <span asp-validation-for="Model" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="Architecture"></label>
+        <input asp-for="Architecture" class="form-control" />
+        <span asp-validation-for="Architecture" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="Cpu"></label>
+        <input asp-for="Cpu" class="form-control" />
+        <span asp-validation-for="Cpu" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="Cores"></label>
+        <input asp-for="Cores" class="form-control" />
+        <span asp-validation-for="Cores" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="LogicalProcessors"></label>
+        <input asp-for="LogicalProcessors" class="form-control" />
+        <span asp-validation-for="LogicalProcessors" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="OperatingSystem"></label>
+        <input asp-for="OperatingSystem" class="form-control" />
+        <span asp-validation-for="OperatingSystem" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="OsVersion"></label>
+        <input asp-for="OsVersion" class="form-control" />
+        <span asp-validation-for="OsVersion" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="OsBuild"></label>
+        <input asp-for="OsBuild" class="form-control" />
+        <span asp-validation-for="OsBuild" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="BiosSerial"></label>
+        <input asp-for="BiosSerial" class="form-control" />
+        <span asp-validation-for="BiosSerial" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="BiosVersion"></label>
+        <input asp-for="BiosVersion" class="form-control" />
+        <span asp-validation-for="BiosVersion" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="InstallDate"></label>
+        <input asp-for="InstallDate" type="date" class="form-control" />
+        <span asp-validation-for="InstallDate" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="Space"></label>
+        <input asp-for="Space" class="form-control" />
+        <span asp-validation-for="Space" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="TotalRamGb"></label>
+        <input asp-for="TotalRamGb" class="form-control" />
+        <span asp-validation-for="TotalRamGb" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="PurchaseDate"></label>
+        <input asp-for="PurchaseDate" type="date" class="form-control" />
+        <span asp-validation-for="PurchaseDate" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="PurchaseCost"></label>
+        <input asp-for="PurchaseCost" class="form-control" />
+        <span asp-validation-for="PurchaseCost" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="WarrantyExpiry"></label>
+        <input asp-for="WarrantyExpiry" type="date" class="form-control" />
+        <span asp-validation-for="WarrantyExpiry" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="Status"></label>
+        <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<AssetStatus>()"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="CategoryId">Category</label>
+        <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId">
+            <option value="">Select category</option>
+        </select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="LocationId">Location</label>
+        <select asp-for="LocationId" class="form-select" asp-items="ViewBag.LocationId">
+            <option value="">Select location</option>
+        </select>
+        <span asp-validation-for="LocationId" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="VendorId">Vendor</label>
+        <select asp-for="VendorId" class="form-select" asp-items="ViewBag.VendorId">
+            <option value="">Select vendor</option>
+        </select>
+        <span asp-validation-for="VendorId" class="text-danger"></span>
+    </div>
+    <div class="form-field span-2">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" rows="4" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+</div>

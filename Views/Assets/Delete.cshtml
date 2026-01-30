@@ -1,0 +1,26 @@
+@model Asset
+@{
+    ViewData["Title"] = "Delete asset";
+}
+
+<section class="page-header">
+    <div>
+        <h1>Delete asset</h1>
+        <p class="muted">This action cannot be undone.</p>
+    </div>
+    <div class="header-actions">
+        <a class="button ghost" asp-action="Details" asp-route-id="@Model.Id">Back to details</a>
+    </div>
+</section>
+
+<div class="panel danger-panel">
+    <h2>@Model.Name</h2>
+    <p class="muted">Tag: @(string.IsNullOrWhiteSpace(Model.Tag) ? "No tag" : Model.Tag)</p>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <div class="form-actions">
+            <button type="submit" class="button danger">Delete asset</button>
+            <a class="button ghost" asp-action="Details" asp-route-id="@Model.Id">Cancel</a>
+        </div>
+    </form>
+</div>

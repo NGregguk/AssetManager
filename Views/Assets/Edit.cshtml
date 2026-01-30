@@ -1,0 +1,30 @@
+@model Asset
+@{
+    ViewData["Title"] = "Edit asset";
+}
+
+<section class="page-header">
+    <div>
+        <h1>Edit asset</h1>
+        <p class="muted">Update the asset record and location data.</p>
+    </div>
+    <div class="header-actions">
+        <a class="button ghost" asp-action="Details" asp-route-id="@Model.Id">Back to details</a>
+    </div>
+</section>
+
+<div class="panel">
+    <form asp-action="Edit">
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <partial name="_AssetForm" model="Model" />
+        <div class="form-actions">
+            <button type="submit" class="button">Save changes</button>
+            <a class="button ghost" asp-action="Details" asp-route-id="@Model.Id">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

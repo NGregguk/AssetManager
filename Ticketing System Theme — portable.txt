@@ -1,0 +1,182 @@
+/* Ticketing System Theme — portable look & feel */
+:root {
+  --brand: #1f4d6b;
+  --brand-dark: #0f2a3a;
+  --accent: #f59e0b;
+
+  --surface: #f4f7fb;
+  --surface-strong: #ffffff;
+  --border: #d9dee6;
+
+  --text: #0f172a;
+  --muted: #6b7280;
+
+  --success: #16a34a;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --info: #79a3ff;
+
+  --shadow-sm: 0 6px 14px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 12px 20px rgba(15, 23, 42, 0.12);
+}
+
+body {
+  font-family: "Space Grotesk", "Segoe UI", Tahoma, sans-serif;
+  background: radial-gradient(circle at top left, #e1e7f0 0%, #edf2f8 45%, #dfe7f2 100%);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* Navigation */
+.app-navbar {
+  background: var(--brand);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.18);
+}
+
+.app-navbar .navbar-brand,
+.app-navbar .nav-link {
+  color: #f8fafc !important;
+  font-weight: 600;
+}
+
+.app-navbar .nav-link:hover {
+  color: var(--accent) !important;
+}
+
+/* Page headers */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  background: var(--surface-strong);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+}
+
+.page-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(31, 77, 107, 0.12);
+  color: var(--brand-dark);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.page-title {
+  font-size: 2rem;
+  margin: 0;
+}
+
+.page-subtitle {
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+
+/* Cards */
+.card {
+  border: 1px solid #c8d1df;
+  background: var(--surface-strong);
+  box-shadow: var(--shadow-sm);
+  border-radius: 16px;
+}
+
+.card-header {
+  background: transparent;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+}
+
+/* Buttons + forms */
+.btn {
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.btn-primary {
+  background: var(--brand);
+  border-color: var(--brand);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background: var(--brand-dark);
+  border-color: var(--brand-dark);
+}
+
+.form-control,
+.form-select {
+  border-radius: 10px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.2);
+}
+
+/* Tables */
+.table thead {
+  background: #f1f5f9;
+}
+
+.table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* Badges (status + priority) */
+.badge-status,
+.badge-priority,
+.badge-sla {
+  font-size: 0.72rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.status-open { background: #e0f2fe; color: #0369a1; }
+.status-inprogress { background: #fef3c7; color: #b45309; }
+.status-waiting { background: #fde68a; color: #92400e; }
+.status-resolved { background: #dcfce7; color: #15803d; }
+.status-closed { background: #e5e7eb; color: #374151; }
+
+.priority-low { background: #e0f2fe; color: #0369a1; }
+.priority-medium { background: #fef3c7; color: #b45309; }
+.priority-high { background: #fee2e2; color: #b91c1c; }
+.priority-critical { background: #7f1d1d; color: #fff; }
+
+/* Utility */
+.text-muted { color: var(--muted) !important; }
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+
+/* Dark mode */
+body.dark-mode {
+  --surface: #1b1e22;
+  --surface-strong: #23262b;
+  --border: #343841;
+  --text: #f1f3f5;
+  --muted: #b5bac2;
+  --shadow-sm: 0 10px 20px rgba(0, 0, 0, 0.28);
+
+  background: radial-gradient(circle at top left, #1e2126 0%, #181b1f 45%, #1e2126 100%);
+  color: var(--text);
+}
+
+body.dark-mode .card,
+body.dark-mode .page-header {
+  background: #1a1d21;
+  color: var(--text);
+  border-color: #2a2d31;
+}
+
+body.dark-mode .table thead {
+  background: #202327;
+}

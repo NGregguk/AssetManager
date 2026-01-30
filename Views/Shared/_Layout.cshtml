@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Asset Management System</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="top-nav">
+        <div class="nav-shell">
+            <a class="brand" asp-area="" asp-controller="Dashboard" asp-action="Index">
+                <span class="brand-mark"></span>
+                <span>Asset Management</span>
+            </a>
+            <nav class="nav-links">
+                <a asp-area="" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                <a asp-area="" asp-controller="Assets" asp-action="Index">Assets</a>
+                <a asp-area="" asp-controller="Reports" asp-action="Index">Reports</a>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-area="Admin" asp-controller="Home" asp-action="Index">Admin</a>
+                }
+            </nav>
+            <div class="nav-actions">
+                <partial name="_LoginPartial" />
+                <button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false" aria-label="Enable dark mode">
+                    <span class="toggle-track" aria-hidden="true">
+                        <span class="toggle-thumb"></span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="app-shell">
+        @RenderBody()
+    </main>
+
+    <footer class="app-footer">
+        <div>(c) 2026 Asset Management System</div>
+        <div class="footer-muted">Operational clarity for every asset.</div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+

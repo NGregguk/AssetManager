@@ -1,0 +1,65 @@
+@model asset_manager.ViewModels.PcInfoUploadViewModel
+@{
+    ViewData["Title"] = "Upload PC info";
+}
+
+<section class="page-header">
+    <div>
+        <h1>Upload PC info</h1>
+        <p class="muted">Import assets from the PCInfo_Fields.csv format.</p>
+    </div>
+    <div class="header-actions">
+        <a class="button ghost" asp-action="Index">Back to list</a>
+    </div>
+</section>
+
+<div class="panel">
+    <form asp-action="Upload" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-grid">
+            <div class="form-field span-2">
+                <label asp-for="File">CSV file</label>
+                <input asp-for="File" type="file" accept=".csv" class="form-control" />
+                <span asp-validation-for="File" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="button">Upload</button>
+        </div>
+    </form>
+</div>
+
+@if (Model.Imported > 0 || Model.Skipped > 0 || Model.Errors.Count > 0)
+{
+    <div class="panel">
+        <div class="panel-header">
+            <h2>Upload results</h2>
+        </div>
+        <div class="maintenance-list">
+            <div class="maintenance-item">
+                <div class="asset-name">Imported</div>
+                <div class="due-date">@Model.Imported</div>
+            </div>
+            <div class="maintenance-item">
+                <div class="asset-name">Skipped</div>
+                <div class="due-date">@Model.Skipped</div>
+            </div>
+        </div>
+
+        @if (Model.Errors.Count > 0)
+        {
+            <div class="timeline">
+                @foreach (var error in Model.Errors)
+                {
+                    <div class="timeline-item">
+                        <div class="muted">@error</div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

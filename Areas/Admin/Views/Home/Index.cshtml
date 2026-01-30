@@ -1,0 +1,41 @@
+@{
+    ViewData["Title"] = "Admin";
+}
+
+<section class="page-header">
+    <div>
+        <h1>Admin</h1>
+        <p class="muted">Manage users and system reference data.</p>
+    </div>
+</section>
+
+<section class="content-grid">
+    <div class="panel">
+        <div class="panel-header">
+            <h2>Users</h2>
+        </div>
+        <p class="muted">Assign Admin/User roles.</p>
+        <a class="button ghost" asp-area="Admin" asp-controller="Users" asp-action="Index">Manage users</a>
+    </div>
+    <div class="panel">
+        <div class="panel-header">
+            <h2>Categories</h2>
+        </div>
+        <p class="muted">Maintain asset categories.</p>
+        <a class="button ghost" asp-area="Admin" asp-controller="Categories" asp-action="Index">Manage categories</a>
+    </div>
+    <div class="panel">
+        <div class="panel-header">
+            <h2>Locations</h2>
+        </div>
+        <p class="muted">Maintain location list.</p>
+        <a class="button ghost" asp-area="Admin" asp-controller="Locations" asp-action="Index">Manage locations</a>
+    </div>
+    <div class="panel">
+        <div class="panel-header">
+            <h2>Vendors</h2>
+        </div>
+        <p class="muted">Maintain vendor list.</p>
+        <a class="button ghost" asp-area="Admin" asp-controller="Vendors" asp-action="Index">Manage vendors</a>
+    </div>
+</section>

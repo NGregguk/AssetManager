@@ -1,0 +1,35 @@
+@model asset_manager.Models.Location
+@{
+    ViewData["Title"] = "Add location";
+}
+
+<section class="page-header">
+    <div>
+        <h1>Add location</h1>
+        <p class="muted">Create a new location.</p>
+    </div>
+    <div class="header-actions">
+        <a class="button ghost" asp-area="Admin" asp-controller="Locations" asp-action="Index">Back to locations</a>
+    </div>
+</section>
+
+<div class="panel">
+    <form asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-grid">
+            <div class="form-field">
+                <label asp-for="Name"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="button">Save</button>
+            <a class="button ghost" asp-area="Admin" asp-controller="Locations" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

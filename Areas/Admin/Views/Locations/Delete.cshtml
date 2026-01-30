@@ -1,0 +1,27 @@
+@model asset_manager.Models.Location
+@{
+    ViewData["Title"] = "Delete location";
+}
+
+<section class="page-header">
+    <div>
+        <h1>Delete location</h1>
+        <p class="muted">This cannot be undone.</p>
+    </div>
+    <div class="header-actions">
+        <a class="button ghost" asp-area="Admin" asp-controller="Locations" asp-action="Index">Back to locations</a>
+    </div>
+</section>
+
+<div class="panel danger-panel">
+    <div class="panel-header">
+        <h2>@Model.Name</h2>
+    </div>
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="form-actions">
+            <button type="submit" class="button danger">Delete</button>
+            <a class="button ghost" asp-area="Admin" asp-controller="Locations" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</div>

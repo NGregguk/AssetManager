@@ -1,0 +1,49 @@
+@model IReadOnlyList<asset_manager.Models.Category>
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<section class="page-header">
+    <div>
+        <h1>Categories</h1>
+        <p class="muted">Manage asset categories.</p>
+    </div>
+    <div class="header-actions">
+        <a class="button ghost" asp-area="Admin" asp-controller="Home" asp-action="Index">Back to admin</a>
+        <a class="button" asp-area="Admin" asp-controller="Categories" asp-action="Create">Add category</a>
+    </div>
+</section>
+
+<div class="panel">
+    <div class="table-wrap">
+        <table class="table table-borderless align-middle">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @if (Model.Count == 0)
+            {
+                <tr>
+                    <td colspan="2" class="empty-state">No categories yet.</td>
+                </tr>
+            }
+            else
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td class="text-end">
+                            <a class="button ghost small" asp-area="Admin" asp-controller="Categories" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                            <a class="button danger small" asp-area="Admin" asp-controller="Categories" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

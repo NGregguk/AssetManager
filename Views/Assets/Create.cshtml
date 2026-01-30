@@ -1,0 +1,29 @@
+@model Asset
+@{
+    ViewData["Title"] = "Create asset";
+}
+
+<section class="page-header">
+    <div>
+        <h1>Create asset</h1>
+        <p class="muted">Add a new asset to the register.</p>
+    </div>
+    <div class="header-actions">
+        <a class="button ghost" asp-action="Index">Back to list</a>
+    </div>
+</section>
+
+<div class="panel">
+    <form asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <partial name="_AssetForm" model="Model" />
+        <div class="form-actions">
+            <button type="submit" class="button">Save asset</button>
+            <a class="button ghost" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

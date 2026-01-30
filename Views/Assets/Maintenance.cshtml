@@ -1,0 +1,39 @@
+@model Asset
+@{
+    ViewData["Title"] = "Maintenance log";
+}
+
+<section class="page-header">
+    <div>
+        <h1>Maintenance log</h1>
+        <p class="muted">@Model.Name</p>
+    </div>
+    <div class="header-actions">
+        <a class="button ghost" asp-action="Details" asp-route-id="@Model.Id">Back to asset</a>
+    </div>
+</section>
+
+<div class="panel">
+    <div class="timeline">
+        @if (Model.MaintenanceRecords.Count == 0)
+        {
+            <div class="empty-state">No maintenance recorded.</div>
+        }
+        else
+        {
+            foreach (var record in Model.MaintenanceRecords)
+            {
+                <div class="timeline-item">
+                    <div>
+                        <div class="asset-name">@record.Summary</div>
+                        <div class="muted">@record.MaintenanceDate.ToString("dd MMM yyyy")</div>
+                    </div>
+                    <div>
+                        <div class="muted">@(record.Vendor?.Name ?? "Internal service")</div>
+                        <div class="muted">@((record.Cost?.ToString("C")) ?? "No cost")</div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

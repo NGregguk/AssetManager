@@ -1,0 +1,22 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<section class="page-header">
+    <div>
+        <h1>Something went wrong</h1>
+        <p class="muted">We were unable to process your request.</p>
+    </div>
+</section>
+
+<div class="panel danger-panel">
+    <p>Try refreshing the page or return to the dashboard.</p>
+    @if (Model.ShowRequestId)
+    {
+        <p class="muted">Request ID: <code>@Model.RequestId</code></p>
+    }
+    <div class="form-actions">
+        <a class="button ghost" asp-controller="Dashboard" asp-action="Index">Return to dashboard</a>
+    </div>
+</div>
