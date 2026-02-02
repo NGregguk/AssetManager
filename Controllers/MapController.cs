@@ -77,6 +77,7 @@ public class MapController(ApplicationDbContext context) : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> AddPin(int planId, int? assetId, decimal xPercent, decimal yPercent, string? label, string? notes)
     {
         if (xPercent < 0 || xPercent > 100 || yPercent < 0 || yPercent > 100)
@@ -108,6 +109,7 @@ public class MapController(ApplicationDbContext context) : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeletePin(int id, int planId)
     {
         var pin = await context.AssetPins.FindAsync(id);
@@ -122,6 +124,7 @@ public class MapController(ApplicationDbContext context) : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdatePin(int id, decimal xPercent, decimal yPercent)
     {
         var pin = await context.AssetPins.FindAsync(id);

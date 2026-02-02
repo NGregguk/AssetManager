@@ -80,6 +80,12 @@ public class Asset
     public int? VendorId { get; set; }
     public Vendor? Vendor { get; set; }
 
+    public int? AssetModelId { get; set; }
+    public AssetModel? AssetModel { get; set; }
+
     public ICollection<Assignment> Assignments { get; set; } = new List<Assignment>();
     public ICollection<MaintenanceRecord> MaintenanceRecords { get; set; } = new List<MaintenanceRecord>();
+    public ICollection<AssetAttachment> Attachments { get; set; } = new List<AssetAttachment>();
+    public ICollection<AssetActivity> Activities { get; set; } = new List<AssetActivity>();
+    public ICollection<AssetPin> Pins { get; set; } = new List<AssetPin>();
 }

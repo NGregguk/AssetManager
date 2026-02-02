@@ -1,0 +1,56 @@
+@model asset_manager.ViewModels.AssetCheckoutViewModel
+@{
+    ViewData["Title"] = "Check out / in";
+}
+
+<section class="page-header">
+    <div>
+        <h1>Check out / in</h1>
+        <p class="muted">@Model.AssetName</p>
+    </div>
+    <div class="header-actions">
+        <a class="button ghost" asp-action="Details" asp-route-id="@Model.AssetId">Back to asset</a>
+    </div>
+</section>
+
+<div class="panel">
+    <div class="panel-header">
+        <h2>Current assignment</h2>
+        <span class="muted">
+            @(string.IsNullOrWhiteSpace(Model.CurrentAssignee)
+                ? "Unassigned"
+                : $"Assigned to {Model.CurrentAssignee} — Expected return {Model.CurrentExpectedReturnDate?.ToString("dd MMM yyyy") ?? "not set"}")
+        </span>
+    </div>
+    <form asp-action="Checkout" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="AssetId" />
+        <input type="hidden" asp-for="AssetName" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-grid">
+            <div class="form-field">
+                <label asp-for="AssignedTo">Assigned to</label>
+                <input asp-for="AssignedTo" class="form-control" />
+                <span asp-validation-for="AssignedTo" class="text-danger"></span>
+            </div>
+            <div class="form-field">
+                <label asp-for="ExpectedReturnDate">Expected return date</label>
+                <input asp-for="ExpectedReturnDate" type="date" class="form-control" />
+                <span asp-validation-for="ExpectedReturnDate" class="text-danger"></span>
+            </div>
+            <div class="form-field">
+                <label asp-for="ReturnedDate">Returned date</label>
+                <input asp-for="ReturnedDate" type="date" class="form-control" />
+                <span asp-validation-for="ReturnedDate" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="button">Save</button>
+            <a class="button ghost" asp-action="Details" asp-route-id="@Model.AssetId">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

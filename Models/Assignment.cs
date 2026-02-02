@@ -15,6 +15,8 @@ public class Assignment
 
     public DateOnly AssignedDate { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
 
+    public DateOnly? ExpectedReturnDate { get; set; }
+
     public DateOnly? ReturnedDate { get; set; }
 
     [StringLength(400)]

@@ -14,6 +14,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<MaintenanceRecord> MaintenanceRecords => Set<MaintenanceRecord>();
     public DbSet<FloorPlan> FloorPlans => Set<FloorPlan>();
     public DbSet<AssetPin> AssetPins => Set<AssetPin>();
+    public DbSet<AssetAttachment> AssetAttachments => Set<AssetAttachment>();
+    public DbSet<AssetActivity> AssetActivities => Set<AssetActivity>();
+    public DbSet<AssetModel> AssetModels => Set<AssetModel>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -23,6 +26,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         {
             entity.HasIndex(a => a.Tag);
             entity.HasIndex(a => a.SerialNumber);
+
+            entity.HasOne(a => a.AssetModel)
+                .WithMany(m => m.Assets)
+                .HasForeignKey(a => a.AssetModelId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         builder.Entity<Assignment>(entity =>
@@ -46,6 +54,30 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 .OnDelete(DeleteBehavior.SetNull);
         });
 
+        builder.Entity<AssetAttachment>(entity =>
+        {
+            entity.HasIndex(a => a.AssetId);
+            entity.HasOne(a => a.Asset)
+                .WithMany(a => a.Attachments)
+                .HasForeignKey(a => a.AssetId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<AssetActivity>(entity =>
+        {
+            entity.HasIndex(a => a.AssetId);
+            entity.HasIndex(a => a.CreatedAt);
+            entity.HasOne(a => a.Asset)
+                .WithMany(a => a.Activities)
+                .HasForeignKey(a => a.AssetId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<AssetModel>(entity =>
+        {
+            entity.HasIndex(m => m.Name);
+        });
+
         builder.Entity<FloorPlan>(entity =>
         {
             entity.HasIndex(p => p.Name);
@@ -59,7 +91,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(p => p.Asset)
-                .WithMany()
+                .WithMany(a => a.Pins)
                 .HasForeignKey(p => p.AssetId)
                 .OnDelete(DeleteBehavior.SetNull);
         });

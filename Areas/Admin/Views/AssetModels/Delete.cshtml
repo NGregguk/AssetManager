@@ -1,0 +1,39 @@
+@model asset_manager.Models.AssetModel
+@{
+    ViewData["Title"] = "Delete model";
+}
+
+<section class="page-header">
+    <div>
+        <h1>Delete model</h1>
+        <p class="muted">@Model.Name</p>
+    </div>
+    <div class="header-actions">
+        <a class="button ghost" asp-action="Index">Back to models</a>
+    </div>
+</section>
+
+<div class="panel">
+    <p>Are you sure you want to delete this model template?</p>
+    <dl class="details-grid">
+        <div>
+            <dt>Name</dt>
+            <dd>@Model.Name</dd>
+        </div>
+        <div>
+            <dt>Manufacturer</dt>
+            <dd>@(Model.Manufacturer ?? "-")</dd>
+        </div>
+        <div>
+            <dt>Model</dt>
+            <dd>@(Model.ModelNumber ?? "-")</dd>
+        </div>
+    </dl>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <div class="form-actions">
+            <button type="submit" class="button danger">Delete</button>
+            <a class="button ghost" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</div>

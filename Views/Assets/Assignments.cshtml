@@ -27,6 +27,7 @@
                     <div>
                         <div class="asset-name">@item.AssignedTo</div>
                         <div class="muted">Assigned @item.AssignedDate.ToString("dd MMM yyyy")</div>
+                        <div class="muted">Expected return @(item.ExpectedReturnDate?.ToString("dd MMM yyyy") ?? "Not set")</div>
                     </div>
                     <div class="muted">@(
                         item.ReturnedDate == null ? "Active" : $"Returned {item.ReturnedDate.Value:dd MMM yyyy}"

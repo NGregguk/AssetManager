@@ -13,6 +13,10 @@ Log.Logger = new LoggerConfiguration()
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration
+    .AddJsonFile("seedusers.json", optional: true, reloadOnChange: true)
+    .AddJsonFile($"seedusers.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+
 builder.Host.UseSerilog((context, services, configuration) =>
     configuration
         .ReadFrom.Configuration(context.Configuration)

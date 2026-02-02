@@ -1,12 +1,13 @@
 @model asset_manager.ViewModels.FloorPlanMapViewModel
 @{
     ViewData["Title"] = "Map";
+    var canEditPins = User.IsInRole("Admin");
 }
 
 <section class="page-header">
     <div>
         <h1>Floor plan map</h1>
-        <p class="muted">Click the map to place a pin and attach asset details.</p>
+        <p class="muted">@(canEditPins ? "Click the map to place a pin and attach asset details." : "View asset locations on the floor plan.")</p>
     </div>
 </section>
 
@@ -44,7 +45,7 @@
 @if (Model.SelectedPlan != null)
 {
     <div class="panel map-panel">
-        <div class="map-canvas" data-plan-id="@Model.SelectedPlan.Id">
+        <div class="map-canvas" data-plan-id="@Model.SelectedPlan.Id" data-can-edit="@canEditPins.ToString().ToLower()">
             @Html.AntiForgeryToken()
             <img src="@Model.SelectedPlan.ImagePath" alt="@Model.SelectedPlan.Name floor plan" class="map-image" />
             <div class="map-preview" id="mapPreview" aria-hidden="true"></div>
@@ -130,46 +131,49 @@
     </div>
 
     <div class="content-grid">
-        <div class="panel">
-            <div class="panel-header">
-                <h2>Add pin</h2>
-                <span class="muted">Use the picker to set a position.</span>
+        @if (canEditPins)
+        {
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>Add pin</h2>
+                    <span class="muted">Use the picker to set a position.</span>
+                </div>
+                <form asp-action="AddPin" method="post" class="form-grid">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="planId" value="@Model.SelectedPlan.Id" />
+                    <input type="hidden" id="pinX" name="xPercent" />
+                    <input type="hidden" id="pinY" name="yPercent" />
+                    <div class="form-field span-2">
+                        <div class="muted" id="pinHint">No location selected yet.</div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="button ghost small" id="pickLocation">Pick location</button>
+                        <button type="button" class="button ghost small" id="clearLocation">Clear location</button>
+                    </div>
+                    <div class="form-field span-2">
+                        <label for="assetId">Asset</label>
+                        <select id="assetId" name="assetId" class="form-select">
+                            <option value="">Select asset (optional)</option>
+                            @foreach (var asset in Model.Assets)
+                            {
+                                <option value="@asset.Id">@asset.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-field span-2">
+                        <label for="label">Label</label>
+                        <input id="label" name="label" class="form-control" />
+                    </div>
+                    <div class="form-field span-2">
+                        <label for="notes">Notes</label>
+                        <textarea id="notes" name="notes" rows="3" class="form-control"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="button">Save pin</button>
+                    </div>
+                </form>
             </div>
-            <form asp-action="AddPin" method="post" class="form-grid">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="planId" value="@Model.SelectedPlan.Id" />
-                <input type="hidden" id="pinX" name="xPercent" />
-                <input type="hidden" id="pinY" name="yPercent" />
-                <div class="form-field span-2">
-                    <div class="muted" id="pinHint">No location selected yet.</div>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="button ghost small" id="pickLocation">Pick location</button>
-                    <button type="button" class="button ghost small" id="clearLocation">Clear location</button>
-                </div>
-                <div class="form-field span-2">
-                    <label for="assetId">Asset</label>
-                    <select id="assetId" name="assetId" class="form-select">
-                        <option value="">Select asset (optional)</option>
-                        @foreach (var asset in Model.Assets)
-                        {
-                            <option value="@asset.Id">@asset.Name</option>
-                        }
-                    </select>
-                </div>
-                <div class="form-field span-2">
-                    <label for="label">Label</label>
-                    <input id="label" name="label" class="form-control" />
-                </div>
-                <div class="form-field span-2">
-                    <label for="notes">Notes</label>
-                    <textarea id="notes" name="notes" rows="3" class="form-control"></textarea>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="button">Save pin</button>
-                </div>
-            </form>
-        </div>
+        }
 
         <div class="panel">
             <div class="panel-header">
@@ -197,12 +201,15 @@
                                 <div class="asset-name">@((pin.Asset?.Name) ?? pin.Label ?? "Pin")</div>
                                 <div class="muted">@pin.Notes</div>
                             </div>
-                            <form asp-action="DeletePin" method="post">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="id" value="@pin.Id" />
-                                <input type="hidden" name="planId" value="@Model.SelectedPlan.Id" />
-                                <button type="submit" class="button danger small">Delete</button>
-                            </form>
+                            @if (canEditPins)
+                            {
+                                <form asp-action="DeletePin" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@pin.Id" />
+                                    <input type="hidden" name="planId" value="@Model.SelectedPlan.Id" />
+                                    <button type="submit" class="button danger small">Delete</button>
+                                </form>
+                            }
                         </div>
                     }
                 </div>
@@ -218,6 +225,7 @@
             if (!map) {
                 return;
             }
+            const canEditPins = map.dataset.canEdit === "true";
             const img = map.querySelector(".map-image");
             const pinX = document.getElementById("pinX");
             const pinY = document.getElementById("pinY");
@@ -245,14 +253,16 @@
                 draggingPin.dataset.y = clampedY.toFixed(2);
             };
 
-            map.addEventListener("mousedown", (event) => {
-                const target = event.target.closest(".map-pin");
-                if (!target) {
-                    return;
-                }
-                draggingPin = target;
-                event.preventDefault();
-            });
+            if (canEditPins) {
+                map.addEventListener("mousedown", (event) => {
+                    const target = event.target.closest(".map-pin");
+                    if (!target) {
+                        return;
+                    }
+                    draggingPin = target;
+                    event.preventDefault();
+                });
+            }
 
             const sidebar = document.getElementById("mapSidebar");
             const closeSidebar = document.getElementById("closeSidebar");
@@ -272,43 +282,47 @@
                 });
             }
 
-            document.addEventListener("mousemove", updatePinPosition);
+            if (canEditPins) {
+                document.addEventListener("mousemove", updatePinPosition);
+            }
 
-            document.addEventListener("mouseup", async () => {
-                if (!draggingPin) {
-                    return;
-                }
-                const pinId = draggingPin.dataset.pinId;
-                const xValue = draggingPin.dataset.x;
-                const yValue = draggingPin.dataset.y;
-                draggingPin = null;
+            if (canEditPins) {
+                document.addEventListener("mouseup", async () => {
+                    if (!draggingPin) {
+                        return;
+                    }
+                    const pinId = draggingPin.dataset.pinId;
+                    const xValue = draggingPin.dataset.x;
+                    const yValue = draggingPin.dataset.y;
+                    draggingPin = null;
 
-                if (!pinId || !xValue || !yValue) {
-                    return;
-                }
+                    if (!pinId || !xValue || !yValue) {
+                        return;
+                    }
 
-                if (!token) {
-                    return;
-                }
+                    if (!token) {
+                        return;
+                    }
 
-                const body = new URLSearchParams();
-                body.set("id", pinId);
-                body.set("xPercent", xValue);
-                body.set("yPercent", yValue);
+                    const body = new URLSearchParams();
+                    body.set("id", pinId);
+                    body.set("xPercent", xValue);
+                    body.set("yPercent", yValue);
 
-                try {
-                    await fetch("@Url.Action("UpdatePin", "Map")", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded",
-                            "RequestVerificationToken": token
-                        },
-                        body: body.toString()
-                    });
-                } catch {
-                    // ignore network errors for now
-                }
-            });
+                    try {
+                        await fetch("@Url.Action("UpdatePin", "Map")", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded",
+                                "RequestVerificationToken": token
+                            },
+                            body: body.toString()
+                        });
+                    } catch {
+                        // ignore network errors for now
+                    }
+                });
+            }
 
             const clearSelection = () => {
                 pinX.value = "";

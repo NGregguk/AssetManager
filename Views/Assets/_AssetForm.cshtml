@@ -1,6 +1,36 @@
 @model Asset
 
 <div class="form-grid">
+    <div class="form-field span-2">
+        <label for="assetModelId">Model template</label>
+        <select id="assetModelId" name="AssetModelId" class="form-select">
+            <option value="">Select model (optional)</option>
+            @{
+                var templates = ViewData["AssetModels"] as List<AssetModel>;
+                if (templates != null)
+                {
+                    foreach (var template in templates)
+                    {
+                        <option value="@template.Id"
+                                selected="@(Model.AssetModelId == template.Id)"
+                                data-manufacturer="@template.Manufacturer"
+                                data-model="@template.ModelNumber"
+                                data-architecture="@template.Architecture"
+                                data-cpu="@template.Cpu"
+                                data-os="@template.OperatingSystem"
+                                data-osversion="@template.OsVersion"
+                                data-osbuild="@template.OsBuild"
+                                data-ram="@template.TotalRamGb">
+                            @template.Name
+                        </option>
+                    }
+                }
+            }
+        </select>
+        <div class="form-actions">
+            <button type="button" class="button ghost small" id="applyModelDefaults">Apply model defaults</button>
+        </div>
+    </div>
     <div class="form-field">
         <label asp-for="Name"></label>
         <input asp-for="Name" class="form-control" />
@@ -138,3 +168,35 @@
         <span asp-validation-for="Description" class="text-danger"></span>
     </div>
 </div>
+
+<script>
+    (() => {
+        const applyButton = document.getElementById("applyModelDefaults");
+        const select = document.getElementById("assetModelId");
+        if (!applyButton || !select) {
+            return;
+        }
+
+        const setValue = (selector, value) => {
+            const input = document.querySelector(selector);
+            if (input && value && value.length > 0) {
+                input.value = value;
+            }
+        };
+
+        applyButton.addEventListener("click", () => {
+            const option = select.options[select.selectedIndex];
+            if (!option || !option.value) {
+                return;
+            }
+            setValue('[name="Manufacturer"]', option.dataset.manufacturer || "");
+            setValue('[name="Model"]', option.dataset.model || "");
+            setValue('[name="Architecture"]', option.dataset.architecture || "");
+            setValue('[name="Cpu"]', option.dataset.cpu || "");
+            setValue('[name="OperatingSystem"]', option.dataset.os || "");
+            setValue('[name="OsVersion"]', option.dataset.osversion || "");
+            setValue('[name="OsBuild"]', option.dataset.osbuild || "");
+            setValue('[name="TotalRamGb"]', option.dataset.ram || "");
+        });
+    })();
+</script>

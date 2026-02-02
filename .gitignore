@@ -8,6 +8,9 @@ obj/
 # Local data
 app.db
 Logs/
+wwwroot/uploads/
 
 # Secrets
 appsettings.Development.json
+seedusers.json
+seedusers.Development.json

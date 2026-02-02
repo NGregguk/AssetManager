@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using asset_manager.Data;
 
@@ -11,9 +12,11 @@ using asset_manager.Data;
 namespace asset_manager.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260202222613_AddAssetActivities")]
+    partial class AddAssetActivities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -236,9 +239,6 @@ namespace asset_manager.Migrations
                         .HasMaxLength(80)
                         .HasColumnType("nvarchar(80)");
 
-                    b.Property<int?>("AssetModelId")
-                        .HasColumnType("int");
-
                     b.Property<string>("BiosSerial")
                         .HasMaxLength(120)
                         .HasColumnType("nvarchar(120)");
@@ -331,8 +331,6 @@ namespace asset_manager.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AssetModelId");
-
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("LocationId");
@@ -417,61 +415,6 @@ namespace asset_manager.Migrations
                     b.HasIndex("AssetId");
 
                     b.ToTable("AssetAttachments");
-                });
-
-            modelBuilder.Entity("asset_manager.Models.AssetModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Architecture")
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
-
-                    b.Property<string>("Cpu")
-                        .HasMaxLength(160)
-                        .HasColumnType("nvarchar(160)");
-
-                    b.Property<string>("Manufacturer")
-                        .HasMaxLength(160)
-                        .HasColumnType("nvarchar(160)");
-
-                    b.Property<string>("ModelNumber")
-                        .HasMaxLength(160)
-                        .HasColumnType("nvarchar(160)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(160)
-                        .HasColumnType("nvarchar(160)");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(400)
-                        .HasColumnType("nvarchar(400)");
-
-                    b.Property<string>("OperatingSystem")
-                        .HasMaxLength(160)
-                        .HasColumnType("nvarchar(160)");
-
-                    b.Property<string>("OsBuild")
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
-
-                    b.Property<string>("OsVersion")
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
-
-                    b.Property<decimal?>("TotalRamGb")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name");
-
-                    b.ToTable("AssetModels");
                 });
 
             modelBuilder.Entity("asset_manager.Models.AssetPin", b =>
@@ -755,11 +698,6 @@ namespace asset_manager.Migrations
 
             modelBuilder.Entity("asset_manager.Models.Asset", b =>
                 {
-                    b.HasOne("asset_manager.Models.AssetModel", "AssetModel")
-                        .WithMany("Assets")
-                        .HasForeignKey("AssetModelId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("asset_manager.Models.Category", "Category")
                         .WithMany("Assets")
                         .HasForeignKey("CategoryId");
@@ -771,8 +709,6 @@ namespace asset_manager.Migrations
                     b.HasOne("asset_manager.Models.Vendor", "Vendor")
                         .WithMany("Assets")
                         .HasForeignKey("VendorId");
-
-                    b.Navigation("AssetModel");
 
                     b.Navigation("Category");
 
@@ -806,7 +742,7 @@ namespace asset_manager.Migrations
             modelBuilder.Entity("asset_manager.Models.AssetPin", b =>
                 {
                     b.HasOne("asset_manager.Models.Asset", "Asset")
-                        .WithMany("Pins")
+                        .WithMany()
                         .HasForeignKey("AssetId")
                         .OnDelete(DeleteBehavior.SetNull);
 
@@ -859,13 +795,6 @@ namespace asset_manager.Migrations
                     b.Navigation("Attachments");
 
                     b.Navigation("MaintenanceRecords");
-
-                    b.Navigation("Pins");
-                });
-
-            modelBuilder.Entity("asset_manager.Models.AssetModel", b =>
-                {
-                    b.Navigation("Assets");
                 });
 
             modelBuilder.Entity("asset_manager.Models.Category", b =>

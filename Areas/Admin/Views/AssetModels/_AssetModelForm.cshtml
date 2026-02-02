@@ -1,0 +1,54 @@
+@model asset_manager.Models.AssetModel
+
+<div class="form-grid">
+    <div class="form-field">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="Manufacturer"></label>
+        <input asp-for="Manufacturer" class="form-control" />
+        <span asp-validation-for="Manufacturer" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="ModelNumber">Model</label>
+        <input asp-for="ModelNumber" class="form-control" />
+        <span asp-validation-for="ModelNumber" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="Architecture"></label>
+        <input asp-for="Architecture" class="form-control" />
+        <span asp-validation-for="Architecture" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="Cpu"></label>
+        <input asp-for="Cpu" class="form-control" />
+        <span asp-validation-for="Cpu" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="OperatingSystem">Operating system</label>
+        <input asp-for="OperatingSystem" class="form-control" />
+        <span asp-validation-for="OperatingSystem" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="OsVersion">OS version</label>
+        <input asp-for="OsVersion" class="form-control" />
+        <span asp-validation-for="OsVersion" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="OsBuild">OS build</label>
+        <input asp-for="OsBuild" class="form-control" />
+        <span asp-validation-for="OsBuild" class="text-danger"></span>
+    </div>
+    <div class="form-field">
+        <label asp-for="TotalRamGb">Total RAM (GB)</label>
+        <input asp-for="TotalRamGb" class="form-control" />
+        <span asp-validation-for="TotalRamGb" class="text-danger"></span>
+    </div>
+    <div class="form-field span-2">
+        <label asp-for="Notes"></label>
+        <textarea asp-for="Notes" rows="3" class="form-control"></textarea>
+        <span asp-validation-for="Notes" class="text-danger"></span>
+    </div>
+</div>

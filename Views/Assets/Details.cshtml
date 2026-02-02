@@ -1,6 +1,18 @@
 @model Asset
 @{
     ViewData["Title"] = "Asset details";
+    Assignment? currentAssignment = null;
+    foreach (var assignment in Model.Assignments)
+    {
+        if (assignment.ReturnedDate != null)
+        {
+            continue;
+        }
+        if (currentAssignment == null || assignment.AssignedDate > currentAssignment.AssignedDate)
+        {
+            currentAssignment = assignment;
+        }
+    }
 }
 
 <section class="page-header">
@@ -9,11 +21,43 @@
         <p class="muted">@(string.IsNullOrWhiteSpace(Model.Tag) ? "No tag assigned" : $"Tag {Model.Tag}")</p>
     </div>
     <div class="header-actions">
-        <a class="button ghost" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
-        <a class="button ghost" asp-controller="Map" asp-action="Index" asp-route-assetId="@Model.Id">Show on map</a>
-        <a class="button danger" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+        @if (User.IsInRole("Admin"))
+        {
+            <a class="button ghost" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+            <a class="button ghost" asp-action="Checkout" asp-route-id="@Model.Id">Check out / in</a>
+        }
+        <a class="button ghost show-on-map"
+           asp-controller="Map"
+           asp-action="Index"
+           asp-route-assetId="@Model.Id"
+           data-asset-name="@Model.Name"
+           data-has-pin="@(Model.Pins.Any())">
+            Show on map
+        </a>
+        @if (User.IsInRole("Admin"))
+        {
+            <a class="button danger" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+        }
     </div>
 </section>
+
+<div class="modal fade" id="mapLocationModal" tabindex="-1" aria-labelledby="mapLocationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mapLocationModalLabel">Map pin missing</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                This asset does not have a map pin yet.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="button ghost" data-bs-dismiss="modal">Close</button>
+                <a class="button" id="mapLocationMapLink">Open map</a>
+            </div>
+        </div>
+    </div>
+</div>
 
 <section class="content-grid">
     <div class="panel">
@@ -27,9 +71,24 @@
                 <dd>@(Model.Category?.Name ?? "Uncategorised")</dd>
             </div>
             <div>
+                <dt>Model template</dt>
+                <dd>@(Model.AssetModel?.Name ?? "Not set")</dd>
+            </div>
+            <div>
                 <dt>Location</dt>
                 <dd>@(Model.Location?.Name ?? "Unassigned")</dd>
             </div>
+            @if (!User.IsInRole("Admin"))
+            {
+                <div>
+                    <dt>Current assignee</dt>
+                    <dd>@(currentAssignment?.AssignedTo ?? "Unassigned")</dd>
+                </div>
+                <div>
+                    <dt>Expected return</dt>
+                    <dd>@(currentAssignment?.ExpectedReturnDate?.ToString("dd MMM yyyy") ?? "Not set")</dd>
+                </div>
+            }
             <div>
                 <dt>Vendor</dt>
                 <dd>@(Model.Vendor?.Name ?? "Not set")</dd>
@@ -148,6 +207,59 @@
 
 <section class="panel">
     <div class="panel-header">
+        <h2>Attachments</h2>
+        <span class="muted">@Model.Attachments.Count file(s)</span>
+    </div>
+    @if (Model.Attachments.Count == 0)
+    {
+        <div class="empty-state">No attachments yet.</div>
+    }
+    else
+    {
+        <div class="timeline">
+            @foreach (var attachment in Model.Attachments.OrderByDescending(a => a.UploadedAt))
+            {
+                <div class="timeline-item">
+                    <div>
+                        <div class="asset-name">
+                            <a href="@attachment.FilePath" target="_blank" rel="noopener">@attachment.OriginalFileName</a>
+                        </div>
+                        <div class="muted">
+                            Uploaded @attachment.UploadedAt.ToString("dd MMM yyyy")
+                            · @(attachment.SizeBytes / 1024) KB
+                        </div>
+                    </div>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <form asp-action="DeleteAttachment" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <input type="hidden" name="attachmentId" value="@attachment.Id" />
+                            <button type="submit" class="button danger small">Delete</button>
+                        </form>
+                    }
+                </div>
+            }
+        </div>
+    }
+    @if (User.IsInRole("Admin"))
+    {
+        <form asp-action="UploadAttachment" method="post" enctype="multipart/form-data" class="form-grid">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.Id" />
+            <div class="form-field span-2">
+                <label for="attachmentFile">Add attachment</label>
+                <input id="attachmentFile" name="file" type="file" class="form-control" />
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="button">Upload</button>
+            </div>
+        </form>
+    }
+</section>
+
+<section class="panel">
+    <div class="panel-header">
         <h2>Maintenance log</h2>
         <a class="text-link" asp-action="Maintenance" asp-route-id="@Model.Id">View log</a>
     </div>
@@ -171,3 +283,63 @@
         }
     </div>
 </section>
+
+<section class="panel">
+    <div class="panel-header">
+        <h2>Activity</h2>
+        <span class="muted">@Model.Activities.Count item(s)</span>
+    </div>
+    @if (Model.Activities.Count == 0)
+    {
+        <div class="empty-state">No activity recorded yet.</div>
+    }
+    else
+    {
+        <div class="timeline">
+            @foreach (var item in Model.Activities)
+            {
+                <div class="timeline-item">
+                    <div>
+                        <div class="asset-name">@item.Message</div>
+                        <div class="muted">@item.CreatedAt.ToString("dd MMM yyyy")</div>
+                    </div>
+                    <div class="muted">@((string.IsNullOrWhiteSpace(item.PerformedBy) ? "System" : item.PerformedBy))</div>
+                </div>
+            }
+        </div>
+    }
+</section>
+
+@section Scripts {
+    <script>
+        (() => {
+            const modalEl = document.getElementById("mapLocationModal");
+            if (!modalEl || typeof bootstrap === "undefined") {
+                return;
+            }
+            const mapLink = document.getElementById("mapLocationMapLink");
+            const modal = new bootstrap.Modal(modalEl);
+
+            document.querySelectorAll(".show-on-map").forEach((link) => {
+                link.addEventListener("click", (event) => {
+                    const hasPin = link.dataset.hasPin === "True" || link.dataset.hasPin === "true";
+                    if (hasPin) {
+                        return;
+                    }
+                    event.preventDefault();
+                    const assetName = link.dataset.assetName || "this asset";
+                    const body = modalEl.querySelector(".modal-body");
+                    if (body) {
+                        body.textContent = `${assetName} does not have a map pin yet.`;
+                    }
+                    if (mapLink) {
+                        const href = link.getAttribute("href") || "";
+                        mapLink.href = href;
+                    }
+                    modal.show();
+                });
+            });
+        })();
+    </script>
+}
+
