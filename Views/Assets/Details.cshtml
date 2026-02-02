@@ -10,6 +10,7 @@
     </div>
     <div class="header-actions">
         <a class="button ghost" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+        <a class="button ghost" asp-controller="Map" asp-action="Index" asp-route-assetId="@Model.Id">Show on map</a>
         <a class="button danger" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
     </div>
 </section>

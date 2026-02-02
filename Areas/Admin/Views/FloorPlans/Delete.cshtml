@@ -1,0 +1,27 @@
+@model asset_manager.Models.FloorPlan
+@{
+    ViewData["Title"] = "Delete floor plan";
+}
+
+<section class="page-header">
+    <div>
+        <h1>Delete floor plan</h1>
+        <p class="muted">This cannot be undone.</p>
+    </div>
+    <div class="header-actions">
+        <a class="button ghost" asp-area="Admin" asp-controller="FloorPlans" asp-action="Index">Back to floor plans</a>
+    </div>
+</section>
+
+<div class="panel danger-panel">
+    <div class="panel-header">
+        <h2>@Model.Name</h2>
+    </div>
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="form-actions">
+            <button type="submit" class="button danger">Delete</button>
+            <a class="button ghost" asp-area="Admin" asp-controller="FloorPlans" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</div>

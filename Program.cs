@@ -33,6 +33,7 @@ var app = builder.Build();
 
 await SeedUsersAsync(app.Services, app.Configuration);
 await SeedSampleDataAsync(app.Services);
+await SeedFloorPlansAsync(app.Services, app.Environment);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -296,5 +297,46 @@ static async Task SeedSampleDataAsync(IServiceProvider services)
 
     context.Assignments.AddRange(assignments);
     context.MaintenanceRecords.AddRange(maintenance);
+    await context.SaveChangesAsync();
+}
+
+static async Task SeedFloorPlansAsync(IServiceProvider services, IWebHostEnvironment environment)
+{
+    using var scope = services.CreateScope();
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+    if (await context.FloorPlans.AnyAsync())
+    {
+        return;
+    }
+
+    var folder = Path.Combine(environment.WebRootPath, "floorplans");
+    if (!Directory.Exists(folder))
+    {
+        return;
+    }
+
+    var files = Directory.GetFiles(folder)
+        .Where(path => path.EndsWith(".png", StringComparison.OrdinalIgnoreCase)
+                       || path.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)
+                       || path.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase))
+        .OrderBy(path => path)
+        .ToList();
+
+    if (files.Count == 0)
+    {
+        return;
+    }
+
+    foreach (var file in files)
+    {
+        var name = Path.GetFileNameWithoutExtension(file);
+        context.FloorPlans.Add(new FloorPlan
+        {
+            Name = name,
+            ImagePath = $"/floorplans/{Path.GetFileName(file)}"
+        });
+    }
+
     await context.SaveChangesAsync();
 }

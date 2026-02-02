@@ -507,6 +507,91 @@ textarea.form-control:focus {
   border-bottom: none;
 }
 
+.map-panel {
+  position: relative;
+  padding: 0;
+  overflow: hidden;
+}
+
+.map-controls {
+  margin-bottom: 1rem;
+}
+
+.map-canvas {
+  position: relative;
+  width: 100%;
+  background: #0f172a;
+}
+
+.map-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.map-pin {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  width: 22px;
+  height: 22px;
+  border-radius: 50% 50% 50% 0;
+  border: none;
+  background: #ef4444;
+  box-shadow: 0 6px 14px rgba(239, 68, 68, 0.35);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+  transform-origin: 50% 100%;
+}
+
+.map-pin span {
+  display: block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #f8fafc;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+}
+
+.map-pin:active {
+  transform: translate(-50%, -100%) scale(1.05);
+}
+
+.map-preview {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px dashed rgba(239, 68, 68, 0.9);
+  background: rgba(239, 68, 68, 0.2);
+  transform: translate(-50%, -50%);
+  display: none;
+  pointer-events: none;
+}
+
+.map-preview.active {
+  display: block;
+}
+
+.map-sidebar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 420px;
+  height: 100%;
+  max-height: none;
+  overflow: auto;
+  display: block;
+  transform: translateX(100%);
+  transition: transform 0.2s ease;
+  border-radius: 0;
+}
+
+.map-sidebar.open {
+  transform: translateX(0);
+}
+
 .details-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -668,6 +753,10 @@ body.dark-mode .text-muted {
 body.dark-mode .theme-toggle {
   border-color: rgba(248, 250, 252, 0.4);
   background: rgba(8, 12, 18, 0.6);
+}
+
+body.dark-mode .map-canvas {
+  background: #0b1117;
 }
 
 body.dark-mode .card,

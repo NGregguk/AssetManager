@@ -1,0 +1,50 @@
+@model IReadOnlyList<asset_manager.Models.FloorPlan>
+@{
+    ViewData["Title"] = "Floor plans";
+}
+
+<section class="page-header">
+    <div>
+        <h1>Floor plans</h1>
+        <p class="muted">Manage floor plan images.</p>
+    </div>
+    <div class="header-actions">
+        <a class="button ghost" asp-area="Admin" asp-controller="Home" asp-action="Index">Back to admin</a>
+        <a class="button" asp-area="Admin" asp-controller="FloorPlans" asp-action="Create">Upload floor plan</a>
+    </div>
+</section>
+
+<div class="panel">
+    <div class="table-wrap">
+        <table class="table table-borderless align-middle">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Image</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @if (Model.Count == 0)
+            {
+                <tr>
+                    <td colspan="3" class="empty-state">No floor plans uploaded yet.</td>
+                </tr>
+            }
+            else
+            {
+                foreach (var plan in Model)
+                {
+                    <tr>
+                        <td>@plan.Name</td>
+                        <td><a class="text-link" href="@plan.ImagePath" target="_blank">Preview</a></td>
+                        <td class="text-end">
+                            <a class="button danger small" asp-area="Admin" asp-controller="FloorPlans" asp-action="Delete" asp-route-id="@plan.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

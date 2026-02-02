@@ -48,6 +48,7 @@
                         <td class="text-end">
                             <a class="button ghost small" asp-action="Details" asp-route-id="@asset.Id">Details</a>
                             <a class="button ghost small" asp-action="Edit" asp-route-id="@asset.Id">Edit</a>
+                            <a class="button ghost small" asp-controller="Map" asp-action="Index" asp-route-assetId="@asset.Id">Show on map</a>
                             <a class="button danger small" asp-action="Delete" asp-route-id="@asset.Id">Delete</a>
                         </td>
                     </tr>

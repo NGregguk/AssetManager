@@ -1,0 +1,40 @@
+@model asset_manager.ViewModels.FloorPlanUploadViewModel
+@{
+    ViewData["Title"] = "Upload floor plan";
+}
+
+<section class="page-header">
+    <div>
+        <h1>Upload floor plan</h1>
+        <p class="muted">Add a new floor plan image.</p>
+    </div>
+    <div class="header-actions">
+        <a class="button ghost" asp-area="Admin" asp-controller="FloorPlans" asp-action="Index">Back to floor plans</a>
+    </div>
+</section>
+
+<div class="panel">
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-grid">
+            <div class="form-field span-2">
+                <label asp-for="Name"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-field span-2">
+                <label asp-for="Image">Floor plan image</label>
+                <input asp-for="Image" type="file" accept=".png,.jpg,.jpeg" class="form-control" />
+                <span asp-validation-for="Image" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="button">Upload</button>
+            <a class="button ghost" asp-area="Admin" asp-controller="FloorPlans" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
