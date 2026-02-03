@@ -990,6 +990,25 @@ body.dark-mode .table thead {
   background: #202327;
 }
 
+body.dark-mode .modal-content {
+  background: #1b1f24;
+  color: var(--text);
+  border-color: #2b313a;
+}
+
+body.dark-mode .modal-header,
+body.dark-mode .modal-footer {
+  border-color: #2b313a;
+}
+
+body.dark-mode .modal-body {
+  color: var(--text);
+}
+
+body.dark-mode .btn-close {
+  filter: invert(1);
+}
+
 @media (max-width: 900px) {
   .nav-shell {
     flex-wrap: wrap;
