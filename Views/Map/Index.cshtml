@@ -42,6 +42,53 @@
     }
 </div>
 
+@if (canEditPins && Model.SelectedPlan != null)
+{
+    <details class="panel map-add-pin" id="addPinPanel">
+        <summary class="panel-header filter-summary">
+            <div>
+                <div class="filter-summary-title">Add pin</div>
+                <div class="muted">Use the picker to set a position.</div>
+            </div>
+            <span class="filter-summary-arrow" aria-hidden="true">&#9662;</span>
+        </summary>
+        <form asp-action="AddPin" method="post" class="form-grid">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="planId" value="@Model.SelectedPlan.Id" />
+            <input type="hidden" id="pinX" name="xPercent" />
+            <input type="hidden" id="pinY" name="yPercent" />
+            <div class="form-field span-2">
+                <div class="muted" id="pinHint">No location selected yet.</div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="button ghost small" id="pickLocation">Pick location</button>
+                <button type="button" class="button ghost small" id="clearLocation">Clear location</button>
+            </div>
+            <div class="form-field span-2">
+                <label for="assetId">Asset</label>
+                <select id="assetId" name="assetId" class="form-select">
+                    <option value="">Select asset (optional)</option>
+                    @foreach (var asset in Model.Assets)
+                    {
+                        <option value="@asset.Id">@asset.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-field span-2">
+                <label for="label">Label</label>
+                <input id="label" name="label" class="form-control" />
+            </div>
+            <div class="form-field span-2">
+                <label for="notes">Notes</label>
+                <textarea id="notes" name="notes" rows="3" class="form-control"></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="button">Save pin</button>
+            </div>
+        </form>
+    </details>
+}
+
 @if (Model.SelectedPlan != null)
 {
     <div class="panel map-panel">
@@ -131,50 +178,6 @@
     </div>
 
     <div class="content-grid">
-        @if (canEditPins)
-        {
-            <div class="panel">
-                <div class="panel-header">
-                    <h2>Add pin</h2>
-                    <span class="muted">Use the picker to set a position.</span>
-                </div>
-                <form asp-action="AddPin" method="post" class="form-grid">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="planId" value="@Model.SelectedPlan.Id" />
-                    <input type="hidden" id="pinX" name="xPercent" />
-                    <input type="hidden" id="pinY" name="yPercent" />
-                    <div class="form-field span-2">
-                        <div class="muted" id="pinHint">No location selected yet.</div>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="button ghost small" id="pickLocation">Pick location</button>
-                        <button type="button" class="button ghost small" id="clearLocation">Clear location</button>
-                    </div>
-                    <div class="form-field span-2">
-                        <label for="assetId">Asset</label>
-                        <select id="assetId" name="assetId" class="form-select">
-                            <option value="">Select asset (optional)</option>
-                            @foreach (var asset in Model.Assets)
-                            {
-                                <option value="@asset.Id">@asset.Name</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="form-field span-2">
-                        <label for="label">Label</label>
-                        <input id="label" name="label" class="form-control" />
-                    </div>
-                    <div class="form-field span-2">
-                        <label for="notes">Notes</label>
-                        <textarea id="notes" name="notes" rows="3" class="form-control"></textarea>
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="button">Save pin</button>
-                    </div>
-                </form>
-            </div>
-        }
-
         <div class="panel">
             <div class="panel-header">
                 <h2>Pins</h2>

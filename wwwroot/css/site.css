@@ -547,6 +547,10 @@ textarea.form-control:focus {
   margin-bottom: 1rem;
 }
 
+.map-add-pin {
+  margin-bottom: 1rem;
+}
+
 .map-canvas {
   position: relative;
   width: 100%;
