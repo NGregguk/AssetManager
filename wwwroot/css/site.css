@@ -264,6 +264,10 @@ h3 {
   padding: 1.25rem;
 }
 
+section.panel + section.panel {
+  margin-top: var(--space-4);
+}
+
 .card-header,
 .panel-header {
   background: transparent;
@@ -291,6 +295,10 @@ h3 {
   border-bottom: none;
   cursor: pointer;
   list-style: none;
+}
+
+.filter-panel {
+  margin-bottom: var(--space-4);
 }
 
 #assetFilters {
@@ -801,6 +809,11 @@ summary:focus-visible,
   display: block;
 }
 
+.panel > .panel-header + p,
+.panel > .panel-header + .muted {
+  margin-top: var(--space-3);
+}
+
 .input-validation-error {
   border-color: var(--danger);
   box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.15);
@@ -830,6 +843,10 @@ summary:focus-visible,
 
 .shadow-sm { box-shadow: var(--shadow-sm); }
 .shadow-md { box-shadow: var(--shadow-md); }
+
+.stack > * + * {
+  margin-top: var(--space-4);
+}
 
 @keyframes spin {
   to {

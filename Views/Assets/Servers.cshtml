@@ -26,25 +26,26 @@
     </div>
 </section>
 
-@if (missingCategory)
-{
-    <div class="panel danger-panel">
-        <div class="panel-header">Server category missing</div>
-        <p class="muted">Create a category named "@serverCategoryName" in Admin to start tracking servers here.</p>
-        @if (User.IsInRole("Admin"))
-        {
-            <a class="button ghost" asp-area="Admin" asp-controller="Categories" asp-action="Create">Add category</a>
-        }
-    </div>
-}
+<div class="stack">
+    @if (missingCategory)
+    {
+        <div class="panel danger-panel">
+            <div class="panel-header">Server category missing</div>
+            <p class="muted">Create a category named "@serverCategoryName" in Admin to start tracking servers here.</p>
+            @if (User.IsInRole("Admin"))
+            {
+                <a class="button ghost" asp-area="Admin" asp-controller="Categories" asp-action="Create">Add category</a>
+            }
+        </div>
+    }
 
-<div class="panel">
-    <details class="panel" id="serverFilters">
-        <summary class="panel-header filter-summary">
-            <div class="filter-summary-title">Filter</div>
-            <span class="filter-summary-arrow" aria-hidden="true">&#9662;</span>
-        </summary>
-        <form method="get" class="form-grid">
+    <div class="panel">
+        <details class="panel filter-panel" id="serverFilters">
+            <summary class="panel-header filter-summary">
+                <div class="filter-summary-title">Filter</div>
+                <span class="filter-summary-arrow" aria-hidden="true">&#9662;</span>
+            </summary>
+            <form method="get" class="form-grid">
             <div class="form-field span-2">
                 <label for="q">Search</label>
                 <input id="q" name="q" class="form-control" value="@(ViewData["Query"] as string ?? string.Empty)" placeholder="Name, tag, serial, computer name" />
@@ -102,7 +103,7 @@
                 <a class="button ghost" asp-action="Servers">Reset</a>
             </div>
         </form>
-    </details>
+        </details>
 
     @{
         var hasFilters =
@@ -194,6 +195,7 @@
             }
             </tbody>
         </table>
+    </div>
     </div>
 </div>
 
