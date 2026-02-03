@@ -34,3 +34,37 @@
     applyTheme(nextTheme);
   });
 })();
+
+(() => {
+  const forms = document.querySelectorAll("form");
+  if (!forms.length) {
+    return;
+  }
+
+  document.addEventListener(
+    "submit",
+    (event) => {
+      const form = event.target;
+      if (!(form instanceof HTMLFormElement)) {
+        return;
+      }
+      const submitter =
+        event.submitter &&
+        (event.submitter.matches("button") || event.submitter.matches('input[type="submit"]'))
+          ? event.submitter
+          : null;
+      const button =
+        submitter ||
+        form.querySelector('button[type="submit"], input[type="submit"]');
+      if (!button || button.hasAttribute("data-no-loading")) {
+        return;
+      }
+      button.classList.add("is-loading");
+      button.setAttribute("aria-busy", "true");
+      if ("disabled" in button) {
+        button.disabled = true;
+      }
+    },
+    true
+  );
+})();
