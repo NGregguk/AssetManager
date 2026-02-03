@@ -1,0 +1,249 @@
+@model IReadOnlyList<Asset>
+@{
+    ViewData["Title"] = "Servers";
+    var serverCategoryName = ViewData["ServerCategoryName"] as string ?? "Servers";
+    var serverCategoryId = ViewData["ServerCategoryId"] as string ?? string.Empty;
+    var missingCategory = ViewData["MissingServerCategory"] as bool? == true;
+}
+
+<section class="page-header">
+    <div>
+        <h1>Servers</h1>
+        <p class="muted">Track infrastructure assets separately from end-user devices.</p>
+    </div>
+    <div class="header-actions">
+        @if (User.IsInRole("Admin"))
+        {
+            if (!string.IsNullOrWhiteSpace(serverCategoryId))
+            {
+                <a class="button" asp-controller="Assets" asp-action="Create" asp-route-categoryId="@serverCategoryId">Add server</a>
+            }
+            else
+            {
+                <a class="button" asp-controller="Assets" asp-action="Create">Add server</a>
+            }
+        }
+    </div>
+</section>
+
+@if (missingCategory)
+{
+    <div class="panel danger-panel">
+        <div class="panel-header">Server category missing</div>
+        <p class="muted">Create a category named "@serverCategoryName" in Admin to start tracking servers here.</p>
+        @if (User.IsInRole("Admin"))
+        {
+            <a class="button ghost" asp-area="Admin" asp-controller="Categories" asp-action="Create">Add category</a>
+        }
+    </div>
+}
+
+<div class="panel">
+    <details class="panel" id="serverFilters">
+        <summary class="panel-header filter-summary">
+            <div class="filter-summary-title">Filter</div>
+            <span class="filter-summary-arrow" aria-hidden="true">&#9662;</span>
+        </summary>
+        <form method="get" class="form-grid">
+            <div class="form-field span-2">
+                <label for="q">Search</label>
+                <input id="q" name="q" class="form-control" value="@(ViewData["Query"] as string ?? string.Empty)" placeholder="Name, tag, serial, computer name" />
+            </div>
+            <div class="form-field">
+                <label for="status">Status</label>
+                <select id="status" name="status" class="form-select">
+                    <option value="">All</option>
+                    @foreach (var item in Html.GetEnumSelectList<AssetStatus>())
+                    {
+                        <option value="@item.Value" selected="@(item.Value == (ViewData["Status"] as string ?? string.Empty))">@item.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="form-field">
+                <label for="locationId">Location</label>
+                <select id="locationId" name="locationId" class="form-select" asp-items="@(ViewData["LocationFilter"] as SelectList)">
+                    <option value="">All</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label for="vendorId">Vendor</label>
+                <select id="vendorId" name="vendorId" class="form-select" asp-items="@(ViewData["VendorFilter"] as SelectList)">
+                    <option value="">All</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label for="sort">Sort by</label>
+                <select id="sort" name="sort" class="form-select">
+                    <option value="">Name (A-Z)</option>
+                    <option value="name_desc" selected="@((ViewData["Sort"] as string ?? string.Empty) == "name_desc")">Name (Z-A)</option>
+                    <option value="purchase_desc" selected="@((ViewData["Sort"] as string ?? string.Empty) == "purchase_desc")">Purchase date (newest)</option>
+                    <option value="purchase_asc" selected="@((ViewData["Sort"] as string ?? string.Empty) == "purchase_asc")">Purchase date (oldest)</option>
+                    <option value="warranty_asc" selected="@((ViewData["Sort"] as string ?? string.Empty) == "warranty_asc")">Warranty expiry (soonest)</option>
+                    <option value="warranty_desc" selected="@((ViewData["Sort"] as string ?? string.Empty) == "warranty_desc")">Warranty expiry (latest)</option>
+                    <option value="status" selected="@((ViewData["Sort"] as string ?? string.Empty) == "status")">Status</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label for="warrantyExpiring">Warranty expiring</label>
+                <select id="warrantyExpiring" name="warrantyExpiring" class="form-select">
+                    <option value="">All</option>
+                    <option value="true" selected="@((ViewData["WarrantyExpiring"] as string ?? string.Empty) == "true")">Next 90 days</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label for="maintenanceDue">Maintenance due</label>
+                <select id="maintenanceDue" name="maintenanceDue" class="form-select">
+                    <option value="">All</option>
+                    <option value="true" selected="@((ViewData["MaintenanceDue"] as string ?? string.Empty) == "true")">Next 30 days</option>
+                </select>
+            </div>
+            <div class="form-actions span-2">
+                <button type="submit" class="button">Apply filters</button>
+                <a class="button ghost" asp-action="Servers">Reset</a>
+            </div>
+        </form>
+    </details>
+
+    @{
+        var hasFilters =
+            !string.IsNullOrWhiteSpace(ViewData["Query"] as string) ||
+            !string.IsNullOrWhiteSpace(ViewData["Status"] as string) ||
+            !string.IsNullOrWhiteSpace(ViewData["LocationId"] as string) ||
+            !string.IsNullOrWhiteSpace(ViewData["VendorId"] as string) ||
+            (ViewData["WarrantyExpiring"] as string) == "true" ||
+            (ViewData["MaintenanceDue"] as string) == "true" ||
+            !string.IsNullOrWhiteSpace(ViewData["Sort"] as string);
+        var resultCount = ViewData["ResultCount"] as int? ?? 0;
+    }
+
+    <div class="panel-header">
+        <div>
+            <h2>Results</h2>
+            <span class="muted">@resultCount servers</span>
+        </div>
+        <div class="header-actions">
+            @if (hasFilters)
+            {
+                <span class="muted">Filters active</span>
+            }
+            @if (User.IsInRole("Admin") && !missingCategory)
+            {
+                <a class="button ghost small" asp-action="ExportServers"
+                   asp-route-q="@(ViewData["Query"] as string)"
+                   asp-route-status="@(ViewData["Status"] as string)"
+                   asp-route-locationId="@(ViewData["LocationId"] as string)"
+                   asp-route-vendorId="@(ViewData["VendorId"] as string)"
+                   asp-route-warrantyExpiring="@(ViewData["WarrantyExpiring"] as string)"
+                   asp-route-maintenanceDue="@(ViewData["MaintenanceDue"] as string)"
+                   asp-route-sort="@(ViewData["Sort"] as string)">
+                    Export CSV
+                </a>
+            }
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table class="table table-borderless align-middle">
+            <thead>
+                <tr>
+                    <th>Server</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @if (Model.Count == 0)
+            {
+                <tr>
+                    <td colspan="4" class="empty-state">No servers in this category yet.</td>
+                </tr>
+            }
+            else
+            {
+                foreach (var asset in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="asset-name">@asset.Name</div>
+                            <div class="muted">@(string.IsNullOrWhiteSpace(asset.Tag) ? "No tag" : asset.Tag)</div>
+                        </td>
+                        <td>@(asset.Location?.Name ?? "Unassigned")</td>
+                        <td><span class="pill">@asset.Status</span></td>
+                        <td class="text-end">
+                            <a class="button ghost small" asp-action="Details" asp-route-id="@asset.Id">Details</a>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a class="button ghost small" asp-action="Edit" asp-route-id="@asset.Id">Edit</a>
+                            }
+                            <a class="button ghost small show-on-map"
+                               asp-controller="Map"
+                               asp-action="Index"
+                               asp-route-assetId="@asset.Id"
+                               data-asset-name="@asset.Name"
+                               data-has-pin="@(asset.Pins.Any())">
+                                Show on map
+                            </a>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a class="button danger small" asp-action="Delete" asp-route-id="@asset.Id">Delete</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="mapLocationModal" tabindex="-1" aria-labelledby="mapLocationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mapLocationModalLabel">Map pin missing</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                This asset does not have a map pin yet.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="button ghost" data-bs-dismiss="modal">Close</button>
+                <a class="button" id="mapLocationMapLink">Open map</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (() => {
+            const modalEl = document.getElementById("mapLocationModal");
+            if (!modalEl || typeof bootstrap === "undefined") {
+                return;
+            }
+            const mapLink = document.getElementById("mapLocationMapLink");
+            const modal = new bootstrap.Modal(modalEl);
+
+            document.querySelectorAll(".show-on-map").forEach((link) => {
+                link.addEventListener("click", (event) => {
+                    const hasPin = link.dataset.hasPin === "True" || link.dataset.hasPin === "true";
+                    if (hasPin) {
+                        return;
+                    }
+                    event.preventDefault();
+                    const assetName = link.dataset.assetName || "this asset";
+                    const body = modalEl.querySelector(".modal-body");
+                    if (body) {
+                        body.textContent = `${assetName} does not have a map pin yet.`;
+                    }
+                    if (mapLink) {
+                        const href = link.getAttribute("href") || "";
+                        mapLink.href = href;
+                    }
+                    modal.show();
+                });
+            });
+        })();
+    </script>
+}

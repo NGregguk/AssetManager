@@ -12,9 +12,20 @@ namespace asset_manager.Controllers;
 [Authorize]
 public class AssetsController(ApplicationDbContext context, IWebHostEnvironment environment) : Controller
 {
+    private static readonly string[] ServerCategoryNames = { "Servers", "Server" };
+
     public async Task<IActionResult> Index(string? q, int? status, int? categoryId, int? locationId, int? vendorId, bool? warrantyExpiring, bool? maintenanceDue, string? sort)
     {
         var assetsQuery = BuildAssetsQuery(q, status, categoryId, locationId, vendorId, warrantyExpiring, maintenanceDue);
+
+        if (!categoryId.HasValue)
+        {
+            var serverCategory = await GetServerCategoryAsync();
+            if (serverCategory != null)
+            {
+                assetsQuery = assetsQuery.Where(a => a.CategoryId == null || a.CategoryId != serverCategory.Id);
+            }
+        }
 
         assetsQuery = ApplySort(assetsQuery, sort);
 
@@ -53,6 +64,14 @@ public class AssetsController(ApplicationDbContext context, IWebHostEnvironment 
     public async Task<IActionResult> Export(string? q, int? status, int? categoryId, int? locationId, int? vendorId, bool? warrantyExpiring, bool? maintenanceDue, string? sort)
     {
         var assetsQuery = BuildAssetsQuery(q, status, categoryId, locationId, vendorId, warrantyExpiring, maintenanceDue);
+        if (!categoryId.HasValue)
+        {
+            var serverCategory = await GetServerCategoryAsync();
+            if (serverCategory != null)
+            {
+                assetsQuery = assetsQuery.Where(a => a.CategoryId == null || a.CategoryId != serverCategory.Id);
+            }
+        }
         assetsQuery = ApplySort(assetsQuery, sort);
 
         var assets = await assetsQuery.ToListAsync();
@@ -90,9 +109,9 @@ public class AssetsController(ApplicationDbContext context, IWebHostEnvironment 
     }
 
     [Authorize(Roles = "Admin")]
-    public IActionResult Create()
+    public IActionResult Create(int? categoryId)
     {
-        PopulateSelectLists();
+        PopulateSelectLists(categoryId.HasValue ? new Asset { CategoryId = categoryId } : null);
         return View();
     }
 
@@ -530,6 +549,62 @@ public class AssetsController(ApplicationDbContext context, IWebHostEnvironment 
         ViewData["AssetModels"] = context.AssetModels.AsNoTracking().OrderBy(m => m.Name).ToList();
     }
 
+    public async Task<IActionResult> Servers(string? q, int? status, int? locationId, int? vendorId, bool? warrantyExpiring, bool? maintenanceDue, string? sort)
+    {
+        var serverCategory = await GetServerCategoryAsync();
+        ViewData["ServerCategoryName"] = serverCategory?.Name ?? "Servers";
+        ViewData["ServerCategoryId"] = serverCategory?.Id.ToString() ?? string.Empty;
+        ViewData["MissingServerCategory"] = serverCategory == null;
+
+        var assets = new List<Asset>();
+        if (serverCategory != null)
+        {
+            var assetsQuery = BuildAssetsQuery(q, status, serverCategory.Id, locationId, vendorId, warrantyExpiring, maintenanceDue);
+            assetsQuery = ApplySort(assetsQuery, sort);
+            assets = await assetsQuery.ToListAsync();
+        }
+
+        ViewData["Query"] = q ?? string.Empty;
+        ViewData["Status"] = status?.ToString() ?? string.Empty;
+        ViewData["LocationId"] = locationId?.ToString() ?? string.Empty;
+        ViewData["VendorId"] = vendorId?.ToString() ?? string.Empty;
+        ViewData["WarrantyExpiring"] = warrantyExpiring == true ? "true" : string.Empty;
+        ViewData["MaintenanceDue"] = maintenanceDue == true ? "true" : string.Empty;
+        ViewData["Sort"] = sort ?? string.Empty;
+        ViewData["ResultCount"] = assets.Count;
+
+        ViewData["LocationFilter"] = new SelectList(
+            await context.Locations.AsNoTracking().OrderBy(l => l.Name).ToListAsync(),
+            "Id",
+            "Name",
+            locationId);
+        ViewData["VendorFilter"] = new SelectList(
+            await context.Vendors.AsNoTracking().OrderBy(v => v.Name).ToListAsync(),
+            "Id",
+            "Name",
+            vendorId);
+
+        return View(assets);
+    }
+
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> ExportServers(string? q, int? status, int? locationId, int? vendorId, bool? warrantyExpiring, bool? maintenanceDue, string? sort)
+    {
+        var serverCategory = await GetServerCategoryAsync();
+        if (serverCategory == null)
+        {
+            return NotFound();
+        }
+
+        var assetsQuery = BuildAssetsQuery(q, status, serverCategory.Id, locationId, vendorId, warrantyExpiring, maintenanceDue);
+        assetsQuery = ApplySort(assetsQuery, sort);
+
+        var assets = await assetsQuery.ToListAsync();
+        var csv = BuildAssetCsv(assets);
+        var fileName = $"servers-{DateTime.UtcNow:yyyyMMdd-HHmm}.csv";
+        return File(Encoding.UTF8.GetBytes(csv), "text/csv", fileName);
+    }
+
     private bool AssetExists(int id)
     {
         return context.Assets.Any(e => e.Id == id);
@@ -769,5 +844,13 @@ public class AssetsController(ApplicationDbContext context, IWebHostEnvironment 
         var needsQuotes = value.Contains(',') || value.Contains('"') || value.Contains('\n') || value.Contains('\r');
         var escaped = value.Replace("\"", "\"\"");
         return needsQuotes ? $"\"{escaped}\"" : escaped;
+    }
+
+    private Task<Category?> GetServerCategoryAsync()
+    {
+        return context.Categories
+            .AsNoTracking()
+            .OrderBy(c => c.Name)
+            .FirstOrDefaultAsync(c => c.Name != null && ServerCategoryNames.Contains(c.Name));
     }
 }
