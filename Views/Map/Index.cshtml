@@ -178,18 +178,21 @@
     </div>
 
     <div class="content-grid">
-        <div class="panel">
-            <div class="panel-header">
-                <h2>Pins</h2>
-                @if (Model.FilterAssetId.HasValue)
-                {
-                    <span class="muted">Filtered by asset</span>
-                }
-                else
-                {
-                    <span class="muted">@Model.Pins.Count total</span>
-                }
-            </div>
+        <details class="panel" id="pinList">
+            <summary class="panel-header filter-summary">
+                <div>
+                    <div class="filter-summary-title">Pins</div>
+                    @if (Model.FilterAssetId.HasValue)
+                    {
+                        <span class="muted">Filtered by asset</span>
+                    }
+                    else
+                    {
+                        <span class="muted">@Model.Pins.Count total</span>
+                    }
+                </div>
+                <span class="filter-summary-arrow" aria-hidden="true">&#9662;</span>
+            </summary>
             @if (Model.Pins.Count == 0)
             {
                 <div class="empty-state">No pins for this plan yet.</div>
@@ -217,7 +220,7 @@
                     }
                 </div>
             }
-        </div>
+        </details>
     </div>
 }
 
