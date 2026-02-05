@@ -1,0 +1,116 @@
+@model asset_manager.ViewModels.GuideEditorViewModel
+@{
+    ViewData["Title"] = "Add guide";
+    var categoryCount = (int)(ViewBag.GuideCategoryCount ?? 0);
+}
+
+<section class="page-header">
+    <div>
+        <h1>Add guide</h1>
+        <p class="muted">Write a new guide or attach a file.</p>
+    </div>
+    <div class="header-actions">
+        <a class="button ghost" asp-area="Admin" asp-controller="Guides" asp-action="Index">Back to guides</a>
+    </div>
+</section>
+
+@if (categoryCount == 0)
+{
+    <div class="panel">
+        <p class="muted">Create a guide category before adding your first guide.</p>
+        <a class="button" asp-area="Admin" asp-controller="GuideCategories" asp-action="Create">Add category</a>
+    </div>
+}
+else
+{
+    <div class="panel">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-grid">
+                <div class="form-field">
+                    <label asp-for="Title"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div class="form-field">
+                    <label asp-for="GuideCategoryId">Category</label>
+                    <select asp-for="GuideCategoryId" class="form-select" asp-items="ViewBag.GuideCategoryId">
+                        <option value="">Select category</option>
+                    </select>
+                    <span asp-validation-for="GuideCategoryId" class="text-danger"></span>
+                </div>
+                <div class="form-field">
+                    <label asp-for="SortOrder">Display order</label>
+                    <input asp-for="SortOrder" class="form-control" />
+                    <span asp-validation-for="SortOrder" class="text-danger"></span>
+                </div>
+            <div class="form-field span-2">
+                <label asp-for="Summary"></label>
+                <textarea asp-for="Summary" rows="2" class="form-control"></textarea>
+                <span asp-validation-for="Summary" class="text-danger"></span>
+            </div>
+            <div class="form-field span-2 full-width">
+                <label asp-for="Attachment">Attachment (optional)</label>
+                <input asp-for="Attachment" type="file" class="form-control" />
+                <span asp-validation-for="Attachment" class="text-danger"></span>
+                <div class="muted">Allowed: .pdf, .doc, .docx, .txt, .md</div>
+            </div>
+            <div class="form-field span-2 full-width">
+                <label asp-for="Content">Guide content</label>
+                <textarea asp-for="Content" rows="10" class="form-control guide-editor" placeholder="Add the steps or notes for this guide."></textarea>
+                <span asp-validation-for="Content" class="text-danger"></span>
+            </div>
+        </div>
+            <div class="form-actions">
+                <button type="submit" class="button">Save guide</button>
+                <a class="button ghost" asp-area="Admin" asp-controller="Guides" asp-action="Index">Cancel</a>
+            </div>
+        </form>
+    </div>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/trumbowyg@2.31.0/dist/trumbowyg.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/trumbowyg@2.31.0/dist/plugins/upload/trumbowyg.upload.min.js"></script>
+    <script>
+        (() => {
+            if (typeof window.jQuery === "undefined") {
+                return;
+            }
+
+            const editor = $(".guide-editor");
+            if (!editor.length || typeof editor.trumbowyg !== "function") {
+                return;
+            }
+
+            const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+            const uploadUrl = "@Url.Action("UploadImage", "Guides", new { area = "Admin" })";
+
+            editor.trumbowyg({
+                autogrow: true,
+                btns: [
+                    ["formatting"],
+                    ["strong", "em", "del"],
+                    ["unorderedList", "orderedList"],
+                    ["link"],
+                    ["upload"],
+                    ["viewHTML"],
+                    ["removeformat"]
+                ],
+                plugins: {
+                    upload: {
+                        serverPath: uploadUrl,
+                        fileFieldName: "file",
+                        urlPropertyName: "link",
+                        headers: tokenInput ? { "RequestVerificationToken": tokenInput.value } : {}
+                    }
+                }
+            });
+        })();
+    </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trumbowyg@2.31.0/dist/ui/trumbowyg.min.css" />
+}

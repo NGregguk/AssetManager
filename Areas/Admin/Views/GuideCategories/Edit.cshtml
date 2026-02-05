@@ -1,0 +1,46 @@
+@model asset_manager.Models.GuideCategory
+@{
+    ViewData["Title"] = "Edit guide category";
+}
+
+<section class="page-header">
+    <div>
+        <h1>Edit guide category</h1>
+        <p class="muted">Update this guide section.</p>
+    </div>
+    <div class="header-actions">
+        <a class="button ghost" asp-area="Admin" asp-controller="GuideCategories" asp-action="Index">Back to categories</a>
+    </div>
+</section>
+
+<div class="panel">
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-grid">
+            <div class="form-field">
+                <label asp-for="Name"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-field span-2">
+                <label asp-for="Description"></label>
+                <textarea asp-for="Description" rows="3" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-field">
+                <label asp-for="SortOrder"></label>
+                <input asp-for="SortOrder" class="form-control" />
+                <span asp-validation-for="SortOrder" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="button">Save changes</button>
+            <a class="button ghost" asp-area="Admin" asp-controller="GuideCategories" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

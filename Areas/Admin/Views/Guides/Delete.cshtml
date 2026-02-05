@@ -1,0 +1,27 @@
+@model asset_manager.Models.Guide
+@{
+    ViewData["Title"] = "Delete guide";
+}
+
+<section class="page-header">
+    <div>
+        <h1>Delete guide</h1>
+        <p class="muted">This action cannot be undone.</p>
+    </div>
+    <div class="header-actions">
+        <a class="button ghost" asp-area="Admin" asp-controller="Guides" asp-action="Index">Back to guides</a>
+    </div>
+</section>
+
+<div class="panel danger-panel">
+    <h2>@Model.Title</h2>
+    <p class="muted">Category: @(Model.GuideCategory?.Name ?? "Uncategorised")</p>
+    <p class="muted">Last updated @Model.UpdatedAt.ToLocalTime().ToString("dd MMM yyyy")</p>
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="form-actions">
+            <button type="submit" class="button danger">Delete guide</button>
+            <a class="button ghost" asp-area="Admin" asp-controller="Guides" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,74 @@
+@model asset_manager.Models.Guide
+@{
+    ViewData["Title"] = "Guide details";
+}
+
+<section class="page-header">
+    <div>
+        <h1>@Model.Title</h1>
+        <p class="muted">@Model.GuideCategory?.Name</p>
+    </div>
+    <div class="header-actions">
+        <a class="button ghost" asp-area="Admin" asp-controller="Guides" asp-action="Index">Back to guides</a>
+        <a class="button ghost" asp-area="Admin" asp-controller="Guides" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+        <a class="button danger" asp-area="Admin" asp-controller="Guides" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="panel-header">
+        <h2>Details</h2>
+    </div>
+    <dl class="details-grid">
+        <div>
+            <dt>Category</dt>
+            <dd>@(Model.GuideCategory?.Name ?? "Uncategorised")</dd>
+        </div>
+        <div>
+            <dt>Updated</dt>
+            <dd>@Model.UpdatedAt.ToLocalTime().ToString("dd MMM yyyy")</dd>
+        </div>
+        <div>
+            <dt>Created</dt>
+            <dd>@Model.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</dd>
+        </div>
+        <div>
+            <dt>Display order</dt>
+            <dd>@Model.SortOrder</dd>
+        </div>
+        <div class="span-2">
+            <dt>Summary</dt>
+            <dd>@(string.IsNullOrWhiteSpace(Model.Summary) ? "No summary provided." : Model.Summary)</dd>
+        </div>
+    </dl>
+</section>
+
+<section class="panel">
+    <div class="panel-header">
+        <h2>Guide content</h2>
+    </div>
+    @if (string.IsNullOrWhiteSpace(Model.Content))
+    {
+        <div class="empty-state">No guide content added.</div>
+    }
+    else
+    {
+        <div class="guide-content">@Html.Raw(Model.Content)</div>
+    }
+</section>
+
+<section class="panel">
+    <div class="panel-header">
+        <h2>Attachment</h2>
+    </div>
+    @if (string.IsNullOrWhiteSpace(Model.AttachmentPath))
+    {
+        <div class="empty-state">No attachment uploaded.</div>
+    }
+    else
+    {
+        <a class="text-link" href="@Model.AttachmentPath" target="_blank" rel="noopener">
+            @(Model.AttachmentName ?? "Download attachment")
+        </a>
+    }
+</section>

@@ -6,6 +6,7 @@
     <title>@ViewData["Title"] - Asset Management System</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
     <header class="top-nav">
@@ -22,6 +23,7 @@
                 <a asp-area="" asp-controller="Reports" asp-action="Index">Reports</a>
                 @if (User.IsInRole("Admin"))
                 {
+                    <a asp-area="Admin" asp-controller="GuideLibrary" asp-action="Index">Guides</a>
                     <a asp-area="Admin" asp-controller="Home" asp-action="Index">Admin</a>
                 }
             </nav>

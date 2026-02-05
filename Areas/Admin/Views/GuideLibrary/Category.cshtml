@@ -1,0 +1,61 @@
+@model asset_manager.Models.GuideCategory
+@{
+    ViewData["Title"] = "Guides - " + Model.Name;
+    var guides = Model.Guides
+        .OrderBy(g => g.SortOrder)
+        .ThenBy(g => g.Title)
+        .ToList();
+}
+
+<section class="page-header">
+    <div>
+        <h1>@Model.Name</h1>
+        <p class="muted">@Model.Description</p>
+    </div>
+    <div class="header-actions">
+        <a class="button ghost" asp-area="Admin" asp-controller="GuideLibrary" asp-action="Index">Back to library</a>
+        <a class="button ghost" asp-area="Admin" asp-controller="GuideCategories" asp-action="Edit" asp-route-id="@Model.Id">Edit category</a>
+        <a class="button" asp-area="Admin" asp-controller="Guides" asp-action="Create" asp-route-categoryId="@Model.Id">Add guide</a>
+    </div>
+</section>
+
+<div class="panel">
+    <div class="table-wrap">
+        <table class="table table-borderless align-middle">
+            <thead>
+                <tr>
+                    <th>Guide</th>
+                    <th>Summary</th>
+                    <th class="text-center">Order</th>
+                    <th class="text-center">Updated</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @if (guides.Count == 0)
+            {
+                <tr>
+                    <td colspan="5" class="empty-state">No guides in this category yet.</td>
+                </tr>
+            }
+            else
+            {
+                foreach (var guide in guides)
+                {
+                    <tr>
+                        <td class="asset-name">@guide.Title</td>
+                        <td class="muted">@guide.Summary</td>
+                        <td class="text-center">@guide.SortOrder</td>
+                        <td class="text-center">@guide.UpdatedAt.ToLocalTime().ToString("dd MMM yyyy")</td>
+                        <td class="text-end">
+                            <a class="button ghost small" asp-area="Admin" asp-controller="Guides" asp-action="Details" asp-route-id="@guide.Id">View</a>
+                            <a class="button ghost small" asp-area="Admin" asp-controller="Guides" asp-action="Edit" asp-route-id="@guide.Id">Edit</a>
+                            <a class="button danger small" asp-area="Admin" asp-controller="Guides" asp-action="Delete" asp-route-id="@guide.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

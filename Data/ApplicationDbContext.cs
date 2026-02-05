@@ -17,6 +17,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<AssetAttachment> AssetAttachments => Set<AssetAttachment>();
     public DbSet<AssetActivity> AssetActivities => Set<AssetActivity>();
     public DbSet<AssetModel> AssetModels => Set<AssetModel>();
+    public DbSet<GuideCategory> GuideCategories => Set<GuideCategory>();
+    public DbSet<Guide> Guides => Set<Guide>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -94,6 +96,22 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 .WithMany(a => a.Pins)
                 .HasForeignKey(p => p.AssetId)
                 .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        builder.Entity<GuideCategory>(entity =>
+        {
+            entity.HasIndex(c => c.Name);
+        });
+
+        builder.Entity<Guide>(entity =>
+        {
+            entity.HasIndex(g => g.Title);
+            entity.HasIndex(g => g.GuideCategoryId);
+
+            entity.HasOne(g => g.GuideCategory)
+                .WithMany(c => c.Guides)
+                .HasForeignKey(g => g.GuideCategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

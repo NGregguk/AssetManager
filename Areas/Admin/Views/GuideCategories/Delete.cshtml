@@ -1,0 +1,28 @@
+@model asset_manager.Models.GuideCategory
+@{
+    ViewData["Title"] = "Delete guide category";
+    var guideCount = Model.Guides?.Count ?? 0;
+}
+
+<section class="page-header">
+    <div>
+        <h1>Delete guide category</h1>
+        <p class="muted">This will remove the category and its guides.</p>
+    </div>
+    <div class="header-actions">
+        <a class="button ghost" asp-area="Admin" asp-controller="GuideCategories" asp-action="Index">Back to categories</a>
+    </div>
+</section>
+
+<div class="panel danger-panel">
+    <h2>@Model.Name</h2>
+    <p class="muted">@Model.Description</p>
+    <p class="muted">Guides in this category: <strong>@guideCount</strong></p>
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="form-actions">
+            <button type="submit" class="button danger">Delete category</button>
+            <a class="button ghost" asp-area="Admin" asp-controller="GuideCategories" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</div>
